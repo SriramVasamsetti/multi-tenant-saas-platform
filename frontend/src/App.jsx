@@ -1,6 +1,69 @@
 import axios from 'axios'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
+// --- DASHBOARD COMPONENT ---
+function Dashboard({ user }) {
+  const [projects, setProjects] = useState([])
+  const [projectName, setProjectName] = useState('')
+  const token = localStorage.getItem('token')
+
+  // Fetch projects for the logged-in tenant
+  const fetchProjects = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/api/projects', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (res.data.success) setProjects(res.data.data)
+    } catch (err) {
+      console.error("Error fetching projects", err)
+    }
+  }
+
+  // Create project tied to this tenant_id
+  const handleCreateProject = async (e) => {
+    e.preventDefault()
+    try {
+      await axios.post('http://localhost:5000/api/projects', 
+        { name: projectName, description: 'Demo Project' },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      setProjectName('')
+      fetchProjects() // Refresh list to show isolation
+    } catch (err) {
+      alert("Failed to create project")
+    }
+  }
+
+  useEffect(() => { fetchProjects() }, [])
+
+  return (
+    <div style={{ marginTop: '20px', borderTop: '1px solid #ccc', paddingTop: '20px' }}>
+      <h3>Project Management</h3>
+      <form onSubmit={handleCreateProject} style={{ marginBottom: '20px' }}>
+        <input 
+          type="text" 
+          placeholder="New Project Name" 
+          value={projectName} 
+          onChange={(e) => setProjectName(e.target.value)}
+          required
+          style={{ padding: '8px', marginRight: '10px' }}
+        />
+        <button type="submit" style={{ padding: '8px 15px' }}>Create Project</button>
+      </form>
+
+      <h4>Your Tenant Projects:</h4>
+      {projects.length === 0 ? <p>No projects found for this tenant.</p> : (
+        <ul>
+          {projects.map(proj => (
+            <li key={proj.id}><strong>{proj.name}</strong> (ID: {proj.id})</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+// --- MAIN APP COMPONENT ---
 export default function App() {
   const [email, setEmail] = useState('admin@demo.com')
   const [password, setPassword] = useState('Demo@123')
@@ -30,14 +93,22 @@ export default function App() {
 
   if (user) {
     return (
-      <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-        <h1>✓ Login Successful!</h1>
-        <p><strong>User:</strong> {user.email}</p>
-        <p><strong>Role:</strong> {user.role}</p>
-        <p><strong>Tenant:</strong> {user.tenantId}</p>
-        <button onClick={() => { setUser(null); localStorage.removeItem('token') }}>
-          Logout
-        </button>
+      <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '600px', margin: 'auto' }}>
+        <h1 style={{ color: 'green' }}>✓ Login Successful!</h1>
+        <div style={{ backgroundColor: '#f4f4f4', padding: '15px', borderRadius: '5px' }}>
+            <p><strong>User:</strong> {user.email}</p>
+            <p><strong>Role:</strong> {user.role}</p>
+            <p><strong>Tenant ID:</strong> {user.tenantId || 'Super Admin (No Tenant)'}</p>
+            <button 
+                onClick={() => { setUser(null); localStorage.removeItem('token') }}
+                style={{ backgroundColor: '#dc3545', color: 'white', border: 'none', padding: '10px', cursor: 'pointer' }}
+            >
+                Logout
+            </button>
+        </div>
+
+        {/* Integrated Dashboard for Projects */}
+        <Dashboard user={user} />
       </div>
     )
   }
@@ -86,21 +157,6 @@ export default function App() {
           {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
-
-      <hr />
-      <h3>Test Credentials:</h3>
-      <p>
-        <strong>Admin:</strong><br/>
-        Email: admin@demo.com<br/>
-        Password: Demo@123<br/>
-        Subdomain: demo
-      </p>
-      <p>
-        <strong>User:</strong><br/>
-        Email: user1@demo.com<br/>
-        Password: User@123<br/>
-        Subdomain: demo
-      </p>
     </div>
   )
 }
