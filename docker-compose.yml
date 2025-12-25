@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: saas_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
@@ -26,9 +26,9 @@ services:
       DB_PORT: 5432
       DB_NAME: saas_db
       DB_USER: postgres
-      DB_PASSWORD: postgres_password
-      JWT_SECRET: dev_secret_key_12345
-      FRONTEND_URL: http://frontend:3000
+      DB_PASSWORD: postgres
+      JWT_SECRET: dev_secret_key_minimum_32_chars_12345
+      FRONTEND_URL: http://localhost:3000
     depends_on:
       database:
         condition: service_healthy
