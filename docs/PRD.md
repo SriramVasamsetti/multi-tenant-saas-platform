@@ -1,30 +1,26 @@
 # Product Requirements Document (PRD)
 
-## User Personas
-* **Super Admin**: System-level administrator with access to all tenants.
-* **Tenant Admin**: Organization administrator with full control over their specific tenant.
-* **End User**: Regular team member with permissions limited to their assigned projects.
+## 1. Project Objective
+To build a highly scalable, multi-tenant Project and Task Management SaaS that ensures total data isolation and role-based access control for diverse organizational structures.
 
-## Functional Requirements
-* **FR-001**: The system shall allow tenant registration with a unique subdomain.
-* **FR-002**: The system shall enforce data isolation via a mandatory `tenant_id` on all records.
-* **FR-003**: The system shall support JWT-based stateless authentication with 24-hour expiry.
-* **FR-004**: The system shall implement Role-Based Access Control (RBAC) at the API level.
-* **FR-005**: The system shall enforce a limit of 5 users for the 'Free' plan.
-* **FR-006**: The system shall enforce a limit of 3 projects for the 'Free' plan.
-* **FR-007**: The system shall allow Tenant Admins to add new users to their organization.
-* **FR-008**: The system shall allow users to create and manage projects.
-* **FR-009**: The system shall allow users to create tasks within projects.
-* **FR-010**: The system shall allow users to update task status (Todo, In Progress, Completed).
-* **FR-011**: The system shall provide a dashboard showing recent activity and statistics.
-* **FR-012**: The system shall log all major actions (CRUD) in an `audit_logs` table.
-* **FR-013**: The system shall prevent Tenant Admins from deleting themselves.
-* **FR-014**: The system shall return all API responses in a `{success, message, data}` format.
-* **FR-015**: The system shall provide a `/api/health` endpoint to monitor database connectivity.
+## 2. Functional Requirements (15+)
+### 2.1 Authentication & Multi-Tenancy
+1.  **Tenant Registration**: System must allow new organizations to register with a unique subdomain.
+2.  **Stateless Login**: Users must authenticate via email, password, and subdomain to receive a JWT.
+3.  **Super Admin Oversight**: A system-level admin must be able to view all active tenants.
+4.  **Session Management**: Users must be able to securely log out and invalidate their local tokens.
+5.  **Profile Access**: Users must be able to view their own profile and organizational context.
 
-## Non-Functional Requirements
-* **NFR-001**: Security: All passwords must be hashed using bcrypt/argon2.
-* **NFR-002**: Availability: The system must be fully dockerized for single-command deployment.
-* **NFR-003**: Performance: Database queries must be optimized using indexes on `tenant_id`.
-* **NFR-004**: Usability: The frontend must be responsive for desktop and mobile.
-* **NFR-005**: Scalability: Support shared database, shared schema architecture.
+### 2.2 Project & Task Management
+6.  **Project Creation**: Tenant admins must be able to create new projects with titles and descriptions.
+7.  **Data Isolation**: Projects created in one tenant must never be visible to users in another tenant.
+8.  **Project Modification**: Authorized users must be able to edit project details.
+9.  **Project Deletion**: Admins must be able to remove projects and all associated tasks.
+10. **Task Creation**: Users must be able to add tasks to specific projects.
+11. **Status Updates**: Tasks must support transitions between 'Todo', 'In Progress', and 'Done'.
+12. **Task Listing**: Users must be able to view a filtered list of tasks belonging to their tenant.
+
+### 2.3 User & Access Control
+13. **User Invitation**: Tenant admins must be able to add new users to their specific organization.
+14. **Role Assignment**: System must support roles including Tenant Admin, User, and Super Admin.
+15. **User Deletion**: Admins must have the authority to revoke user access from the tenant.
