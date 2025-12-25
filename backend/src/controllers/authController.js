@@ -50,10 +50,13 @@ exports.login = async (req, res) => {
   const activeSubdomain = subdomain || tenantSubdomain;
 
   try {
+    // FIX: Explicitly handle Super Admin (NULL tenant and NULL subdomain)
     const result = await pool.query(
-      `SELECT u.*, t.status as tenant_status FROM users u 
+      `SELECT u.*, t.status as tenant_status 
+       FROM users u 
        LEFT JOIN tenants t ON u.tenant_id = t.id 
-       WHERE LOWER(u.email) = LOWER($1) AND (t.subdomain = $2 OR u.tenant_id IS NULL)`,
+       WHERE LOWER(u.email) = LOWER($1) 
+       AND (t.subdomain = $2 OR (t.subdomain IS NULL AND u.tenant_id IS NULL))`,
       [email, activeSubdomain]
     );
 

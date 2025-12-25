@@ -16,7 +16,7 @@ export default function App() {
     
     try {
       const response = await axios.post(
-        'http://backend:5000/api/auth/login',
+        'http://localhost:5000/api/auth/login',
         { email, password, tenantSubdomain: subdomain }
       )
       setUser(response.data.data.user)
