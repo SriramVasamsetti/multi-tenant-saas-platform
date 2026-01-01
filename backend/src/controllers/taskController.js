@@ -47,6 +47,15 @@ exports.updateTaskStatus = async (req, res) => {
   const { taskId } = req.params;
   const { status } = req.body;
   const { tenantId } = req.user;
+    
+  // Validate status
+  const validStatuses = ['Todo', 'In Progress', 'Done'];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ 
+      success: false, 
+      message: `Invalid status. Must be one of: ${validStatuses.join(', ')}` 
+    });
+  }
 
   try {
     const result = await pool.query(
