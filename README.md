@@ -32,3 +32,13 @@ Comprehensive documentation is available in the `/docs` folder:
 
 ## 🎥 Demo Video
 [Link to your YouTube Demo Video]
+
+## 📋 Task Status Values
+
+Tasks support the following status values for workflow management:
+
+- **Todo**: Initial state for newly created tasks
+- **In Progress**: Assigned to a user and actively being worked on
+- **Done**: Task completed and ready for review
+
+Task status transitions are enforced through the API with proper validation to ensure data consistency across the multi-tenant system.
