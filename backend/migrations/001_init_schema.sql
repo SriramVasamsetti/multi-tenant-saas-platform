@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
   title VARCHAR(255) NOT NULL,
   description TEXT,
-  status VARCHAR(20) DEFAULT 'todo' CHECK (status IN ('todo', 'in_progress', 'completed')),
+  status VARCHAR(20) DEFAULT 'Todo' CHECK (status IN ('Todo', 'In Progress', 'Done')),
   priority VARCHAR(20) DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
   assigned_to UUID REFERENCES users(id) ON DELETE SET NULL,
   due_date DATE,
